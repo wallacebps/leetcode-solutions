@@ -1,13 +1,16 @@
+import { useUser } from "./UserContext";
 import Header from "./components/Header";
-import ProblemItem from "./components/ProblemItem";
 import ProblemList from "./components/ProblemList";
-import ProblemDetails from "./components/ProblemDetails";
+import Auth from "./Auth";
 
 function App() {
+  const { user } = useUser();
+
   return (
-    <div>
+    <div className="App">
       <Header />
-      <ProblemList />
+      <Auth />
+      {user && <ProblemList />}
     </div>
   );
 }

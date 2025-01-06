@@ -11,6 +11,7 @@ function ProblemList() {
 
   const [selectedProblem, setSelectedProblem] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const categories = ['All', 'Array', 'Linked List', 'String'];
 
@@ -23,7 +24,8 @@ function ProblemList() {
   };
 
   const filteredProblems = problems.filter((problem) =>
-    selectedCategory === 'All' || problem.category === selectedCategory
+    (selectedCategory === 'All' || problem.category === selectedCategory) &&
+    problem.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -47,7 +49,19 @@ function ProblemList() {
           ))}
         </select>
       </div>
-
+      <div className="mb-4">
+        <label htmlFor="search" className="block text-lg font-semibold mb-2">
+          Buscar Problema:
+        </label>
+        <input
+          id="search"
+          type="text"
+          placeholder="Digite o título do problema..."
+          className="p-2 border rounded-md w-full"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
       <div className="grid gap-4">
         {filteredProblems.map((problem) => (
           <ProblemItem
@@ -59,10 +73,7 @@ function ProblemList() {
         ))}
       </div>
       {selectedProblem && (
-        <ProblemDetails
-          problem={selectedProblem}
-          onClose={closeDetails}
-        />
+        <ProblemDetails problem={selectedProblem} onClose={closeDetails} />
       )}
     </div>
   );
