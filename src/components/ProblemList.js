@@ -1,19 +1,23 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import ProblemItem from "./ProblemItem";
 import ProblemDetails from "./ProblemDetails";
 
+function fetchProblems() {
+  return fetch("http://localhost:5000/problems").then((res) => res.json());
+}
+
 function ProblemList() {
-  const [problems] = useState([
-    { id: 1, title: 'Two Sum', category: 'Array', code: '// código para Two Sum', video: 'Link para vídeo' },
-    { id: 2, title: 'Add Two Numbers', category: 'Linked List', code: '// código para Add Two Numbers', video: 'Link para vídeo' },
-    { id: 3, title: 'Longest Substring Without Repeating Characters', category: 'String', code: '// código para Longest Substring', video: 'Link para vídeo' },
-  ]);
+  const { data: problems = [], isLoading, error } = useQuery({
+    queryKey: ["problems"],
+    queryFn: fetchProblems,
+  });
 
   const [selectedProblem, setSelectedProblem] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const categories = ['All', 'Array', 'Linked List', 'String'];
+  const categories = ["All", "Array", "Linked List", "String"];
 
   const openDetails = (problem) => {
     setSelectedProblem(problem);
@@ -23,15 +27,18 @@ function ProblemList() {
     setSelectedProblem(null);
   };
 
-  const filteredProblems = problems.filter((problem) =>
-    (selectedCategory === 'All' || problem.category === selectedCategory) &&
-    problem.title.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProblems = problems.filter(
+    (problem) =>
+      (selectedCategory === "All" || problem.category === selectedCategory) &&
+      problem.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (isLoading) return <p>Carregando...</p>;
+  if (error) return <p>Erro ao carregar os dados: {error.message}</p>;
 
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Problemas Resolvidos</h2>
-
       <div className="mb-4">
         <label htmlFor="category" className="block text-lg font-semibold mb-2">
           Filtrar por Categoria:
